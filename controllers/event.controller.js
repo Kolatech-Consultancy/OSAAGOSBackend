@@ -36,14 +36,12 @@ export default class eventController {
   }
 
   static async getSingleEvent(req, res) {
-    console.log('Event getSingleEvent');
-
     try {
-      const { eventId } = req.params.eventId;
-      const event = await Event_Model.findOne({ _id: '66a7c467fec13b11071918fe' });
-      console.log(3, event.length);
-
-      if (!event) {
+      const eventId = req.params.eventId;
+      // console.log(2, eventId);
+      const event = await Event_Model.findOne({ _id: eventId });
+      console.log(4, event);
+      if (!event || event.length === 0) {
         return res.status(490).json({
           message: 'Event Not Found',
         });
@@ -56,6 +54,48 @@ export default class eventController {
       res.status(500).json({
         error: error,
       });
+    }
+  }
+
+  static async updateEvent(req, res) {
+    console.log('Updated' + req.params.eventId);
+
+    try {
+      const eventId = req.params.eventId;
+      const updates = req.body;
+      const updatedEvent = await Event_Model.findByIdAndUpdate({ _id: eventId }, updates, {
+        new: true, // return the updated document
+        runValidators: true, // validate before update
+      });
+
+      if (!updatedEvent) {
+        return res.status(404).send({ message: 'Event not found' });
+      }
+      return res.status(201).json({
+        message: 'Events updated successfully!!',
+        data: updatedEvent,
+      });
+      // res.send(updatedEvent);
+    } catch (err) {
+      res.status(500).send({ message: 'Error updating event', error: err });
+    }
+  }
+
+  static async deleteEvent(req, res) {
+    console.log('Updated' + req.params.eventId);
+
+    try {
+      const eventId = req.params.eventId;
+      const deletedEvent = await Event_Model.findByIdAndDelete(eventId);
+
+      if (!deletedEvent) {
+        return res.status(404).send({ message: 'Event not found' });
+      }
+
+      res.send({ message: 'Event deleted successfully', event: deletedEvent });
+      // res.send(updatedEvent);
+    } catch (err) {
+      res.status(500).send({ message: 'Error updating event', error: err });
     }
   }
 }
