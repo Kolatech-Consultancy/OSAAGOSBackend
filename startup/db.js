@@ -14,7 +14,7 @@ export const connectDB = async function () {
     );
     return db;
   } catch (error) {
-    console.log(`Error:${error.message}`.red.underline);
+    console.log(`Error:${error.message}`.red);
     process.exit;
   }
 };
